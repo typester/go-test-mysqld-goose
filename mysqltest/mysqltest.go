@@ -29,7 +29,7 @@ func New(dir string) (*TestMysqld, error) {
 }
 
 func (t *TestMysqld) deployDB(dir string) error {
-    conf, err := goose.NewDBConf(dir, "development")
+    conf, err := goose.NewDBConf(dir, "development", "")
 	if err != nil {
         return err
 	}
