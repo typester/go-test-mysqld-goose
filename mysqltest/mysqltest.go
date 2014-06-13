@@ -3,11 +3,16 @@ package mysqltest
 import (
 	"bitbucket.org/liamstask/goose/lib/goose"
 	mt "github.com/lestrrat/go-test-mysqld"
+	"github.com/ziutek/mymysql/godrv"
     "fmt"
 )
 
 type TestMysqld struct {
     Server *mt.TestMysqld
+}
+
+func init() {
+	godrv.Register("CREATE DATABASE IF NOT EXISTS test")
 }
 
 // New function launch new MySQL instance with default settings,
