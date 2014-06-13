@@ -3,22 +3,31 @@ package mysqltest
 import (
 	"bitbucket.org/liamstask/goose/lib/goose"
 	mt "github.com/lestrrat/go-test-mysqld"
-	"github.com/ziutek/mymysql/godrv"
     "fmt"
+
+	"database/sql"
+	_ "github.com/ziutek/mymysql/godrv"
 )
 
 type TestMysqld struct {
     Server *mt.TestMysqld
 }
 
-func init() {
-	godrv.Register("CREATE DATABASE IF NOT EXISTS test")
-}
-
 // New function launch new MySQL instance with default settings,
 // and deploy SQLs in `dir` by `goose` automatically.
 func New(dir string) (*TestMysqld, error) {
     mysql, err := mt.NewMysqld(nil)
+	if err != nil {
+		return nil, err
+	}
+
+	db, err := sql.Open("mymysql", fmt.Sprintf("unix:%s*mysql/root/", mysql.Socket()))
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS test")
 	if err != nil {
 		return nil, err
 	}
